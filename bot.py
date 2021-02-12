@@ -15,11 +15,18 @@ GUILD = os.getenv('DISCORD_GUILD')
 bot = commands.Bot(command_prefix = '!')
 bot.remove_command('help')
 
+
 # # # TO DO # # #
-# Add error handling for wrong commands
+# Add error handling for wrong commands <Kind of done
 # Add ban/muting capabilities
 # Add language parsing
-# Add !help support
+
+
+
+# #################### #
+# --- Bot Workings --- #
+# #################### #
+
 
 
 # --- Connecting to Server --- #
@@ -82,13 +89,18 @@ async def on_error(event, *args, **kwargs):
 		else:
 			raise
 
+
+
 # #################### #
 # --- Bot Commands --- #
 # #################### #
 
+
+
 # --- New Help Command ---#
 @bot.command(pass_context = True)
 async def help(ctx):
+	await ctx.message.delete()
 	author = ctx.message.author
 	
 	embed = discord.Embed(
@@ -104,6 +116,7 @@ async def help(ctx):
 	
 	
 	await discord.User.send(author, embed = embed)
+	
 
 
 # --- Role Assignment --- #
@@ -113,12 +126,14 @@ async def addrole(ctx, major: str):
 	role = discord.utils.get(member.guild.roles, name = major)
 		
 	await member.add_roles(role, reason = 'Adding role to user', atomic = True)
-	#await ctx.send('Your role has been added!')
+	await ctx.message.delete()
+	#await ctx.send('Your role has been added!')  -- Removed due to chat clutter
 	
 @addrole.error
 async def info_error(ctx, error):
 	if isinstance(error, commands.CommandError):
 		await ctx.send('That is an invalid role, or missing a role.  Check your command and try again, make sure to type "!addrole <role>"!')
+
 
 
 bot.run(TOKEN)
